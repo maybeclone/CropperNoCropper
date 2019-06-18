@@ -119,13 +119,13 @@ public class CropperImageView extends ImageView {
                 orientation == Configuration.ORIENTATION_UNDEFINED) {
 
             int width = MeasureSpec.getSize(widthMeasureSpec);
-            int height = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+            int height = MeasureSpec.getSize(heightMeasureSpec);
             setMeasuredDimension(width, height);
 
         } else {
 
             int height = MeasureSpec.getSize(heightMeasureSpec);
-            int width = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+            int width = MeasureSpec.getSize(widthMeasureSpec);
             setMeasuredDimension(width, height);
 
         }
