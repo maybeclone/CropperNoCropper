@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewTreeObserver;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.fenchtose.nocropper.BitmapResult;
@@ -21,6 +22,7 @@ import com.fenchtose.nocropper.CropInfo;
 import com.fenchtose.nocropper.CropResult;
 import com.fenchtose.nocropper.CropState;
 import com.fenchtose.nocropper.CropperCallback;
+import com.fenchtose.nocropper.CropperImageView;
 import com.fenchtose.nocropper.CropperView;
 import com.fenchtose.nocropper.ScaledCropper;
 
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     @Bind(R.id.imageview)
-    CropperView mImageView;
+    CropperImageView mImageView;
 
     @Bind(R.id.original_checkbox)
     CheckBox originalImageCheckbox;
@@ -63,19 +65,10 @@ public class MainActivity extends AppCompatActivity {
             setContentView(R.layout.activity_main_landscape);
         }
         ButterKnife.bind(this);
-        mImageView.setDebug(true);
+        mImageView.setHasZoom(false);
+        mImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        mImageView.setGestureEnabled(true);
 
-        mImageView.setGridCallback(new CropperView.GridCallback() {
-            @Override
-            public boolean onGestureStarted() {
-                return true;
-            }
-
-            @Override
-            public boolean onGestureCompleted() {
-                return false;
-            }
-        });
     }
 
     @OnClick(R.id.image_button)
@@ -190,77 +183,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cropImageAsync() {
-        CropState state = mImageView.getCroppedBitmapAsync(new CropperCallback() {
-            @Override
-            public void onCropped(Bitmap bitmap) {
-                if (bitmap != null) {
 
-                    try {
-                        BitmapUtils.writeBitmapToFile(bitmap, new File(Environment.getExternalStorageDirectory() + "/crop_test.jpg"), 90);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onOutOfMemoryError() {
-
-            }
-        });
-
-        if (state == CropState.FAILURE_GESTURE_IN_PROCESS) {
-            Toast.makeText(this, "unable to crop. Gesture in progress", Toast.LENGTH_SHORT).show();
-        }
-
-        if (originalImageCheckbox.isChecked()) {
-            cropOriginalImageAsync();
-        }
     }
 
     private void cropImage() {
 
-        BitmapResult result = mImageView.getCroppedBitmap();
-
-        if (result.getState() == CropState.FAILURE_GESTURE_IN_PROCESS) {
-            Toast.makeText(this, "unable to crop. Gesture in progress", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Bitmap bitmap = result.getBitmap();
-
-        if (bitmap != null) {
-            Log.d("Cropper", "crop1 bitmap: " + bitmap.getWidth() + ", " + bitmap.getHeight());
-            try {
-                BitmapUtils.writeBitmapToFile(bitmap, new File(Environment.getExternalStorageDirectory() + "/crop_test.jpg"), 90);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (originalImageCheckbox.isChecked()) {
-            cropOriginalImage();
-        }
 
     }
 
     private ScaledCropper prepareCropForOriginalImage() {
-        CropResult result = mImageView.getCropInfo();
-        if (result.getCropInfo() == null) {
-            return null;
-        }
-
-        float scale;
-        if (rotationCount % 2 == 0) {
-            // same width and height
-            scale = (float) originalBitmap.getWidth()/mBitmap.getWidth();
-        } else {
-            // width and height are interchanged
-            scale = (float) originalBitmap.getWidth()/mBitmap.getHeight();
-        }
-
-        CropInfo cropInfo = result.getCropInfo().rotate90XTimes(mBitmap.getWidth(), mBitmap.getHeight(), rotationCount);
-        return new ScaledCropper(cropInfo, originalBitmap, scale);
+        return null;
     }
 
     private void cropOriginalImage() {
