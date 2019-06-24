@@ -1,35 +1,35 @@
 package com.fenctose.imagecropper;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewTreeObserver;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.fenchtose.nocropper.BitmapResult;
-import com.fenchtose.nocropper.CropInfo;
-import com.fenchtose.nocropper.CropResult;
-import com.fenchtose.nocropper.CropState;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.fenchtose.nocropper.BitmapCropCallback;
 import com.fenchtose.nocropper.CropperCallback;
 import com.fenchtose.nocropper.CropperImageView;
-import com.fenchtose.nocropper.CropperView;
+import com.fenchtose.nocropper.ImageCache;
 import com.fenchtose.nocropper.ScaledCropper;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
@@ -40,14 +40,17 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_GALLERY = 21;
     private static final String TAG = "MainActivity";
 
-    @Bind(R.id.imageview)
+    @BindView(R.id.imageview)
     CropperImageView mImageView;
 
-    @Bind(R.id.original_checkbox)
+    @BindView(R.id.original_checkbox)
     CheckBox originalImageCheckbox;
 
-    @Bind(R.id.crop_checkbox)
+    @BindView(R.id.crop_checkbox)
     CheckBox cropAsyncCheckbox;
+
+    @BindView(R.id.imageViewReview)
+    ImageView imageViewReview;
 
     private Bitmap originalBitmap;
     private Bitmap mBitmap;
@@ -78,10 +81,32 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.crop_button)
     public void onImageCropClicked() {
-        if (cropAsyncCheckbox.isChecked()) {
-            cropImageAsync();
-        } else {
-            cropImage();
+
+        PackageManager m = getPackageManager();
+        String s = getPackageName();
+        PackageInfo p = null;
+        try {
+            p = m.getPackageInfo(s, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        s = "file://"+p.applicationInfo.dataDir+"/crop_image.png";
+
+        try {
+            mImageView.cropBitmapDishCache(this, new URL(s), new BitmapCropCallback() {
+                @Override
+                public void onBitmapCropped(@NonNull URL resultUri) {
+                    Bitmap bitmap = new ImageCache(getCacheDir(), 1000).readFromDiskCache(resultUri);
+                    imageViewReview.setImageBitmap(bitmap);
+                }
+
+                @Override
+                public void onCropFailure(@NonNull Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

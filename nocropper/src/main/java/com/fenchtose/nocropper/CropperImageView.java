@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -20,10 +21,19 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
+
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * Created by Jay Rambhia on 10/29/2015.
  */
-public class CropperImageView extends ImageView {
+public class CropperImageView extends AppCompatImageView {
 
     private static final String TAG = "CropperImageView";
 
@@ -76,12 +86,6 @@ public class CropperImageView extends ImageView {
 
     public CropperImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public CropperImageView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }
 
@@ -678,6 +682,10 @@ public class CropperImageView extends ImageView {
             throw e;
         }
 
+    }
+
+    public void cropBitmapDishCache(Context context, URL url, BitmapCropCallback callback) {
+        new BitmapCropTask(context, getCroppedBitmap(), callback, url).execute();
     }
 
     public CropInfo getCropInfo() {

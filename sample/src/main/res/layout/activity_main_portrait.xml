@@ -92,6 +92,19 @@
 
     </GridLayout>
 
+    <ImageView
+        android:id="@+id/imageViewReview"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_above="@+id/bottom_grid"
+        android:layout_below="@+id/top_frame"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="103dp"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
 
 </RelativeLayout>
