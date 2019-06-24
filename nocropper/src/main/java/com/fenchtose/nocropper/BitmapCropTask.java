@@ -74,7 +74,7 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
     protected void onPostExecute(@Nullable Throwable t) {
         if (cropCallback != null) {
             if (t == null) {
-                cropCallback.onBitmapCropped(saveURL);
+                cropCallback.onBitmapCropped(saveURL, bitmap.getByteCount());
             } else {
                 cropCallback.onCropFailure(t);
             }

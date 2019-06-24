@@ -23,6 +23,7 @@ import com.fenchtose.nocropper.BitmapCropCallback;
 import com.fenchtose.nocropper.CropperCallback;
 import com.fenchtose.nocropper.CropperImageView;
 import com.fenchtose.nocropper.ImageCache;
+import com.fenchtose.nocropper.IntentHelpers;
 import com.fenchtose.nocropper.ScaledCropper;
 
 import java.io.File;
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         s = "file://"+p.applicationInfo.dataDir+"/crop_image.png";
 
         try {
-            mImageView.cropBitmapDishCache(this, new URL(s), new BitmapCropCallback() {
+            mImageView.cropBitmapAsync(this, new URL(s), new BitmapCropCallback() {
                 @Override
                 public void onBitmapCropped(@NonNull URL resultUri) {
                     Bitmap bitmap = new ImageCache(getCacheDir(), 1000).readFromDiskCache(resultUri);
@@ -168,9 +169,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = IntentHelpers.getPickImageChooserIntent(this, "Image Picker", true, true);
         startActivityForResult(intent, REQUEST_GALLERY);
     }
+
+
 
     private boolean hasGalleryPermission() {
         return ActivityCompat.checkSelfPermission(this,

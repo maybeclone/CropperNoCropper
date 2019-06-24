@@ -9,7 +9,7 @@ import java.net.URL;
 
 public interface BitmapCropCallback {
 
-    void onBitmapCropped(@NonNull URL resultUri);
+    void onBitmapCropped(@NonNull URL resultUri, int byteCount);
 
     void onCropFailure(@NonNull Throwable t);
 
