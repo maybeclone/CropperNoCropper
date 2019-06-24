@@ -58,41 +58,23 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
         return null;
     }
 
-    private boolean crop() {
+    private void crop() {
         saveImage(bitmap);
-        return true;
     }
 
     private void saveImage(@NonNull Bitmap croppedBitmap) {
-        try {
-            boolean saved = imageCache.writeToDiskCache(this.saveURL, bitmap);
-            if (!saved) {
-                cropCallback.onCropFailure(new Exception("save bitmap failed"));
-            }
-            croppedBitmap.recycle();
-        } finally {
-
+        boolean saved = imageCache.writeToDiskCache(this.saveURL, bitmap);
+        if (!saved) {
+            cropCallback.onCropFailure(new Exception("save bitmap failed"));
         }
+        croppedBitmap.recycle();
     }
 
     @Override
     protected void onPostExecute(@Nullable Throwable t) {
         if (cropCallback != null) {
             if (t == null) {
-                try {
-                    URI oldUri = saveURL.toURI();
-                    Uri uri  = new Uri.Builder().scheme(oldUri.getScheme())
-                            .encodedAuthority(oldUri.getRawAuthority())
-                            .encodedPath(oldUri.getRawPath())
-                            .query(oldUri.getRawQuery())
-                            .fragment(oldUri.getRawFragment())
-                            .build();
-
-                    cropCallback.onBitmapCropped(saveURL);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                    cropCallback.onCropFailure(e);
-                }
+                cropCallback.onBitmapCropped(saveURL);
             } else {
                 cropCallback.onCropFailure(t);
             }

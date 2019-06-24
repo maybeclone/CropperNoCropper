@@ -684,7 +684,7 @@ public class CropperImageView extends AppCompatImageView {
 
     }
 
-    public void cropBitmapDishCache(Context context, URL url, BitmapCropCallback callback) {
+    public void cropBitmapAsync(Context context, URL url, BitmapCropCallback callback) {
         new BitmapCropTask(context, getCroppedBitmap(), callback, url).execute();
     }
 
