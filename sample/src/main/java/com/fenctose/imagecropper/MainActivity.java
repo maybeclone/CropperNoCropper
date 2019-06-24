@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             mImageView.cropBitmapAsync(this, new URL(s), new BitmapCropCallback() {
                 @Override
-                public void onBitmapCropped(@NonNull URL resultUri) {
+                public void onBitmapCropped(@NonNull URL resultUri, int byteCount) {
                     Bitmap bitmap = new ImageCache(getCacheDir(), 1000).readFromDiskCache(resultUri);
                     imageViewReview.setImageBitmap(bitmap);
                 }
