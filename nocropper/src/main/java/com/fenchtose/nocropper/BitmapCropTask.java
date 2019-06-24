@@ -29,13 +29,15 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
     private ImageCache imageCache;
     private final WeakReference<Context> context;
     private final URL saveURL;
+    private int byteCount;
 
     public BitmapCropTask(Context context, @Nullable Bitmap bitmap,
                           @Nullable BitmapCropCallback cropCallback, URL saveURL) {
         this.bitmap = bitmap;
         this.cropCallback = cropCallback;
         this.context = new WeakReference<>(context);
-        this.imageCache = new ImageCache(this.context.get().getCacheDir(), bitmap.getByteCount());
+        this.byteCount = bitmap.getByteCount();
+        this.imageCache = new ImageCache(this.context.get().getCacheDir(), this.byteCount);
         this.saveURL = saveURL;
     }
 
@@ -74,7 +76,7 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
     protected void onPostExecute(@Nullable Throwable t) {
         if (cropCallback != null) {
             if (t == null) {
-                cropCallback.onBitmapCropped(saveURL, bitmap.getByteCount());
+                cropCallback.onBitmapCropped(saveURL,this.byteCount);
             } else {
                 cropCallback.onCropFailure(t);
             }
